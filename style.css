@@ -5,3 +5,5 @@
 @media(max-width:720px){.site-header{height:auto;min-height:68px;flex-wrap:wrap;gap:12px;padding-top:14px;padding-bottom:14px}.site-header nav{flex-wrap:wrap;gap:16px}}
 
 .profile-prose{max-width:650px;margin-top:30px}.profile-prose section+section{margin-top:30px}.profile-prose h3{font-size:12px;font-weight:400;letter-spacing:.14em;color:var(--muted);margin:0 0 12px}.profile-prose p{font-size:13px;line-height:2;margin:0;overflow-wrap:anywhere}
+
+.detail{overflow-anchor:none}.detail-hero>img{aspect-ratio:4/5;object-position:center top}.detail-hero{overflow-anchor:none}
