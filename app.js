@@ -29,9 +29,27 @@ function detail(id){let c=characters[id];location.hash=id;app.innerHTML=`<sectio
 function panel(id,tab){let c=characters[id],p=document.querySelector('#panel');if(tab==='profile')p.innerHTML=`<div class="profile-table"><div>NAME</div><div>${c.name} / ${c.roman}</div><div>SERIES</div><div>${c.series}</div>${c.isPersona ? '<div>TYPE</div><div>代理キャラクター</div>' : ''}${c.relation ? `<div>RELATION</div><div>${c.relation}</div>` : ''}${c.profile ? `<div>性別</div><div>${esc(c.profile.gender)}</div><div>年齢</div><div>${esc(c.profile.age)}</div><div>身長</div><div>${esc(c.profile.height)}</div>` : '<div>PROFILE</div><div>設定は今後追加予定</div>'}</div>${c.profile ? `<div class="profile-prose"><section><h3>性格</h3><p>${esc(c.profile.personality)}</p></section><section><h3>特徴</h3><p>${esc(c.profile.traits)}</p></section></div>` : ''}`;if(tab==='prompt'){p.innerHTML=`<div class="promptbox"><button class="copy">COPY</button>${esc(c.prompt)}</div>`;document.querySelector('.copy').onclick=async e=>{await navigator.clipboard.writeText(c.prompt);e.target.textContent='COPIED'}}if(tab==='gallery'){p.innerHTML=`<div class="gallery">${(c.gallery || [c.image]).map((src,index)=>`<img src="${src}" alt="${c.name} — ${index+1}" loading="lazy">`).join('')}</div>`;p.querySelectorAll('img').forEach(img=>{setImageFallback(img);img.onclick=e=>light(e.target.src)})}}
 function esc(s){return s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;')}
 const lb=document.querySelector('#lightbox');function light(src){lb.querySelector('img').src=src;lb.classList.add('open');lb.setAttribute('aria-hidden','false')}lb.onclick=e=>{if(e.target===lb||e.target.tagName==='BUTTON'){lb.classList.remove('open');lb.setAttribute('aria-hidden','true')}};
-window.addEventListener('load',()=>{let h=location.hash.slice(1);characters[h]?detail(h):home()});
+window.addEventListener('load',()=>{let h=location.hash.slice(1);if(characters[h])detail(h);else if(seriesIds.includes(h))goToSeries(h,'instant');else home()});
 
 document.querySelector('.brand').onclick=e=>{e.preventDefault();lb.classList.remove('open');lb.setAttribute('aria-hidden','true');home();window.scrollTo({top:0,left:0,behavior:'instant'})};
 
 if('scrollRestoration' in history)history.scrollRestoration='manual';
 function resetCharacterScroll(){const top=()=>window.scrollTo({top:0,left:0,behavior:'instant'});top();requestAnimationFrame(()=>requestAnimationFrame(top))}
+
+const seriesIds=['gravekeepers','angels','demons'];
+const siteHeader=document.querySelector('.site-header');
+function updateHeaderOffset(){document.documentElement.style.setProperty('--header-offset',`${siteHeader.getBoundingClientRect().height+12}px`)}
+updateHeaderOffset();
+new ResizeObserver(updateHeaderOffset).observe(siteHeader);
+function goToSeries(id,behavior='smooth'){
+  lb.classList.remove('open');lb.setAttribute('aria-hidden','true');
+  if(!document.getElementById(id))home();
+  history.replaceState(null,'',`#${id}`);
+  requestAnimationFrame(()=>{
+    updateHeaderOffset();
+    document.querySelector(`#${id} .series-head`).scrollIntoView({block:'start',behavior});
+  });
+}
+document.querySelectorAll('.site-header nav a').forEach(link=>{
+  link.onclick=event=>{event.preventDefault();goToSeries(link.getAttribute('href').slice(1))};
+});
