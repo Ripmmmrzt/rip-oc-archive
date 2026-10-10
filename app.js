@@ -21,7 +21,7 @@ characters.alva.profile={"gender": "男性", "age": "27歳", "height": "195cm", 
 characters.mu.gallery=["assets/mu-gallery-main.png"];
 characters.lambda.gallery=["assets/lambda-gallery-main.png"];
 const app=document.querySelector('#app');
-function home(){location.hash='home';app.innerHTML=`<section class="hero"><div><div class="eyebrow">ORIGINAL CHARACTER COLLECTION / 2026</div><h1>R.I.P<br>OC<br>ARCHIVE.</h1></div></section><section class="series" id="gravekeepers"><div class="series-head"><div><div class="section-label">SERIES 01</div><h2>GRAVEKEEPERS</h2></div><p>墓守たちの記録。キャラクターを選択するとプロフィール、生成プロンプト、ギャラリーを閲覧できます。</p></div><div class="grid">${Object.keys(characters).filter(id=>characters[id].series==='GRAVEKEEPERS').map(card).join('')}</div></section><section class="series" id="angels"><div class="series-head"><div><div class="section-label">SERIES 02</div><h2>ANGELS</h2></div><p>天使たちの記録。キャラクターを選択するとプロフィールとギャラリーを閲覧できます。</p></div><div class="grid">${Object.keys(characters).filter(id=>characters[id].series==='ANGELS').map(card).join('')}</div></section><section class="series" id="demons"><div class="series-head"><div><div class="section-label">SERIES 03</div><h2>DEMONS</h2></div><p>悪魔たちの記録。キャラクターを選択するとプロフィールとギャラリーを閲覧できます。</p></div><div class="grid">${Object.keys(characters).filter(id=>characters[id].series==='DEMONS').map(card).join('')}</div></section><p class="ai-note">※イラストは全てAI生成で作成しました</p>`;bindCards()}
+function home(resetScroll=true){location.hash='home';app.innerHTML=`<section class="hero"><div><div class="eyebrow">ORIGINAL CHARACTER COLLECTION / 2026</div><h1>R.I.P<br>OC<br>ARCHIVE.</h1></div></section><section class="series" id="gravekeepers"><div class="series-head"><div><div class="section-label">SERIES 01</div><h2>GRAVEKEEPERS</h2></div><p>墓守たちの記録。キャラクターを選択するとプロフィール、生成プロンプト、ギャラリーを閲覧できます。</p></div><div class="grid">${Object.keys(characters).filter(id=>characters[id].series==='GRAVEKEEPERS').map(card).join('')}</div></section><section class="series" id="angels"><div class="series-head"><div><div class="section-label">SERIES 02</div><h2>ANGELS</h2></div><p>天使たちの記録。キャラクターを選択するとプロフィールとギャラリーを閲覧できます。</p></div><div class="grid">${Object.keys(characters).filter(id=>characters[id].series==='ANGELS').map(card).join('')}</div></section><section class="series" id="demons"><div class="series-head"><div><div class="section-label">SERIES 03</div><h2>DEMONS</h2></div><p>悪魔たちの記録。キャラクターを選択するとプロフィールとギャラリーを閲覧できます。</p></div><div class="grid">${Object.keys(characters).filter(id=>characters[id].series==='DEMONS').map(card).join('')}</div></section><p class="ai-note">※イラストは全てAI生成で作成しました</p>`;bindCards();if(resetScroll)resetCharacterScroll()}
 function card(id){let c=characters[id];return `<article class="char-card${c.isPersona ? ' persona-card' : ''}" data-id="${id}"><img src="${c.cardImage || c.image}" alt="${c.name}"><div class="card-info"><b>${c.roman}</b><span>${c.name}${c.isPersona ? ' <em class="persona-inline">✦ 代理</em>' : ''} · ${c.series}</span></div></article>`}
 function setImageFallback(img){img.onerror=()=>{const src=img.getAttribute('src');if(src&&src.startsWith('assets/'))img.src=src.slice(7)}}
 function bindCards(){document.querySelectorAll('.char-card img').forEach(setImageFallback);document.querySelectorAll('.char-card').forEach(x=>x.onclick=()=>detail(x.dataset.id))}
@@ -29,7 +29,7 @@ function detail(id){let c=characters[id];location.hash=id;app.innerHTML=`<sectio
 function panel(id,tab){let c=characters[id],p=document.querySelector('#panel');if(tab==='profile')p.innerHTML=`<div class="profile-table"><div>NAME</div><div>${c.name} / ${c.roman}</div><div>SERIES</div><div>${c.series}</div>${c.isPersona ? '<div>TYPE</div><div>代理キャラクター</div>' : ''}${c.relation ? `<div>RELATION</div><div>${c.relation}</div>` : ''}${c.profile ? `<div>性別</div><div>${esc(c.profile.gender)}</div><div>年齢</div><div>${esc(c.profile.age)}</div><div>身長</div><div>${esc(c.profile.height)}</div>` : '<div>PROFILE</div><div>設定は今後追加予定</div>'}</div>${c.profile ? `<div class="profile-prose"><section><h3>性格</h3><p>${esc(c.profile.personality)}</p></section><section><h3>特徴</h3><p>${esc(c.profile.traits)}</p></section></div>` : ''}`;if(tab==='prompt'){p.innerHTML=`<div class="promptbox"><button class="copy">COPY</button>${esc(c.prompt)}</div>`;document.querySelector('.copy').onclick=async e=>{await navigator.clipboard.writeText(c.prompt);e.target.textContent='COPIED'}}if(tab==='gallery'){p.innerHTML=`<div class="gallery">${(c.gallery || [c.image]).map((src,index)=>`<img src="${src}" alt="${c.name} — ${index+1}" loading="lazy">`).join('')}</div>`;p.querySelectorAll('img').forEach(img=>{setImageFallback(img);img.onclick=e=>light(e.target.src)})}}
 function esc(s){return s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;')}
 const lb=document.querySelector('#lightbox');function light(src){lb.querySelector('img').src=src;lb.classList.add('open');lb.setAttribute('aria-hidden','false')}lb.onclick=e=>{if(e.target===lb||e.target.tagName==='BUTTON'){lb.classList.remove('open');lb.setAttribute('aria-hidden','true')}};
-window.addEventListener('load',()=>{let h=location.hash.slice(1);if(characters[h])detail(h);else if(seriesIds.includes(h))goToSeries(h,'instant');else home()});
+window.addEventListener('load',()=>{let h=location.hash.slice(1);if(characters[h])detail(h);else home()});
 
 document.querySelector('.brand').onclick=e=>{e.preventDefault();lb.classList.remove('open');lb.setAttribute('aria-hidden','true');home();window.scrollTo({top:0,left:0,behavior:'instant'})};
 
@@ -43,8 +43,8 @@ updateHeaderOffset();
 new ResizeObserver(updateHeaderOffset).observe(siteHeader);
 function goToSeries(id,behavior='smooth'){
   lb.classList.remove('open');lb.setAttribute('aria-hidden','true');
-  if(!document.getElementById(id))home();
-  history.replaceState(null,'',`#${id}`);
+  if(!document.getElementById(id))home(false);
+  history.replaceState(null,'','#home');
   requestAnimationFrame(()=>{
     updateHeaderOffset();
     document.querySelector(`#${id} .series-head`).scrollIntoView({block:'start',behavior});
@@ -53,3 +53,5 @@ function goToSeries(id,behavior='smooth'){
 document.querySelectorAll('.site-header nav a').forEach(link=>{
   link.onclick=event=>{event.preventDefault();goToSeries(link.getAttribute('href').slice(1))};
 });
+
+window.addEventListener('pageshow',event=>{if(event.persisted&&document.querySelector('.hero'))resetCharacterScroll()});
