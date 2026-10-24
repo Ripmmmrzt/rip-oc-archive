@@ -20,3 +20,5 @@
 .detail{overflow-anchor:none}.detail-hero>img{aspect-ratio:4/5;object-position:center top}.detail-hero{overflow-anchor:none}
 
 .ai-note{margin:0;padding:24px 5vw 0;color:var(--muted);font-size:10px;line-height:1.8;letter-spacing:.02em}
+
+.profile-overview p+p{margin-top:12px}
