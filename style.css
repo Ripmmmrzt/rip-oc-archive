@@ -30,3 +30,5 @@
 .detail:has(.detail-hero img[src="assets/nosferatu.png"]) h1{font-size:clamp(18px,4.5vw,72px)}
 
 .prompt-variant+.prompt-variant{margin-top:32px}.prompt-variant h3{font-size:14px;font-weight:400;margin:0 0 16px;letter-spacing:.05em}
+
+.story-text{max-width:720px;margin:0 auto;font-size:15px;line-height:2.2;overflow-wrap:anywhere}.story-text section+section{margin-top:52px}.story-text h3{font-size:18px;font-weight:400;letter-spacing:.12em;margin:0 0 24px}.story-text p{margin:0 0 24px}.story-text p:last-child{margin-bottom:0}
