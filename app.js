@@ -83,12 +83,15 @@ const safe=s=>esc(s).replaceAll('"','&quot;');
 const asset=p=>p;
 function light(src,alt='拡大画像'){const img=zoom.querySelector('img');img.src=src;img.alt=alt;if(!zoom.open)zoom.showModal()}
 zoom.addEventListener('click',e=>{if(e.target===zoom)zoom.close()});
+const featuredIds=Object.keys(characters);
+const featuredId=featuredIds[Math.floor(Math.random()*featuredIds.length)];
+const featured=characters[featuredId];
 function home(restore=false){
- app.innerHTML=`<section class="hero"><div class="hero-copy"><div class="label">ORIGINAL CHARACTERS</div><h1>R.I.P<br>OC<br>ARCHIVE.</h1></div><a class="hero-art" href="#madara" data-feature aria-label="赤斑禍ノ神のページへ"><img alt="" src="${asset(characters.madara.image)}"><span class="label">FEATURED / MADARA ↗</span></a></section><section class="catalog" aria-labelledby="catalog-title"><div class="catalog-heading"><div><div class="label">CHARACTER INDEX</div><h2 id="catalog-title">キャラクター一覧</h2></div><span class="label" id="count" aria-live="polite"></span></div><div class="filter-row"><div class="filters" role="group" aria-label="シリーズ">${Object.entries(series).map(([k,v])=>`<button data-series="${k}" aria-pressed="false">${v}</button>`).join('')}</div><label class="search"><span aria-hidden="true">⌕</span><input type="search" aria-label="キャラクター名で検索" placeholder="名前で検索"></label></div><div id="cards" class="grid"></div></section>`;
+ app.innerHTML=`<section class="hero"><div class="hero-copy"><div class="label">ORIGINAL CHARACTERS</div><h1>R.I.P<br>OC<br>ARCHIVE.</h1></div><a class="hero-art" href="#${featuredId}" data-feature aria-label="${safe(featured.name)}のページへ"><img alt="" src="${asset(featured.image)}"><span class="label">FEATURED / ${esc(featured.roman)} ↗</span></a></section><section class="catalog" aria-labelledby="catalog-title"><div class="catalog-heading"><div><div class="label">CHARACTER INDEX</div><h2 id="catalog-title">キャラクター一覧</h2></div><span class="label" id="count" aria-live="polite"></span></div><div class="filter-row"><div class="filters" role="group" aria-label="シリーズ">${Object.entries(series).map(([k,v])=>`<button data-series="${k}" aria-pressed="false">${v}</button>`).join('')}</div><label class="search"><span aria-hidden="true">⌕</span><input type="search" aria-label="キャラクター名で検索" placeholder="名前で検索"></label></div><div id="cards" class="grid"></div></section>`;
  const input=app.querySelector('input'); input.value=state.query;
  input.oninput=()=>{state.query=input.value;drawCards()};
  app.querySelector('.filters').onclick=e=>{const b=e.target.closest('[data-series]');if(b){state.series=b.dataset.series;drawCards()}};
- app.querySelector('[data-feature]').onclick=e=>{e.preventDefault();openCard('madara')};
+ app.querySelector('[data-feature]').onclick=e=>{e.preventDefault();openCard(featuredId)};
  app.querySelector('#cards').onclick=e=>{const b=e.target.closest('[data-character]');if(b)openCard(b.dataset.character)};
  drawCards();
  if(restore){if(state.last)app.querySelector('[data-character="'+state.last+'"]')?.focus({preventScroll:true});scrollTo(0,state.scroll)}else scrollTo(0,0);
